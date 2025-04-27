@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 st.set_page_config(page_title="Sudoku Constraint Satisfaction", layout="wide")
 
 def solve_sudoku_steps(initial_grid, use_forward_checking, use_mrv, use_lcv):
+    """Generates steps for solving a Sudoku puzzle via backtracking."""
     grid = initial_grid.copy()
     domains = {(r, c): ([int(grid[r, c])] if grid[r, c] else list(range(1, 10)))
                for r in range(9) for c in range(9)}
@@ -24,6 +25,7 @@ def solve_sudoku_steps(initial_grid, use_forward_checking, use_mrv, use_lcv):
             peers[(r, c)] = peer_set
 
     def pick_cell():
+        """Selects the next cell to assign, optionally using MRV."""
         unassigned = [(len(domains[cell]), cell) for cell in domains if len(domains[cell]) > 1]
         if not unassigned:
             return None
@@ -32,6 +34,7 @@ def solve_sudoku_steps(initial_grid, use_forward_checking, use_mrv, use_lcv):
         return unassigned[0][1]
 
     def order_values(cell):
+        """Orders values for a cell, optionally using LCV."""
         vals = domains[cell]
         if not use_lcv:
             return vals
@@ -42,6 +45,7 @@ def solve_sudoku_steps(initial_grid, use_forward_checking, use_mrv, use_lcv):
         return [v for _, v in sorted(scores)]
 
     def capture_state(event, cell=None, val=None, pruned_cells=None):
+        """Captures the current solver state for visualization."""
         current_board = np.zeros((9, 9), int)
         for (r, c), dom in domains.items():
             if len(dom) == 1:
@@ -68,6 +72,7 @@ def solve_sudoku_steps(initial_grid, use_forward_checking, use_mrv, use_lcv):
         }
 
     def backtrack():
+        """Recursive backtracking search function."""
         nonlocal assignment_count, backtrack_count
         if all(len(domains[c]) == 1 for c in domains):
             yield capture_state("Solved")
