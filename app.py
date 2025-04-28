@@ -98,9 +98,7 @@ def solve_sudoku_steps(initial_grid, use_forward_checking, use_mrv, use_lcv):
                     if value in domains[peer_cell]:
                         if peer_cell not in pruned_domains:
                              pruned_domains[peer_cell] = domains[peer_cell]
-
                         new_domain = [x for x in domains[peer_cell] if x != value]
-
                         if not new_domain:
                             is_valid = False
                             domains[peer_cell] = pruned_domains[peer_cell]
@@ -109,13 +107,10 @@ def solve_sudoku_steps(initial_grid, use_forward_checking, use_mrv, use_lcv):
                                      domains[p_restore] = d_restore
                             pruned_domains = {}
                             break
-
                         domains[peer_cell] = new_domain
                         affected_peers_for_snapshot.append(peer_cell)
-
                 if is_valid:
                      yield capture_state("Prune", cell=cell, val=value, pruned_cells=affected_peers_for_snapshot)
-
             if is_valid and (yield from backtrack()):
                 return True
 
@@ -176,7 +171,6 @@ with st.sidebar:
             rows = [r.strip() for r in raw_puzzle_input.splitlines() if r.strip()]
             if len(rows) != 9:
                 raise ValueError("Input must contain exactly 9 rows.")
-
             grid_list = []
             for i, r in enumerate(rows):
                 nums = [n.strip() for n in r.split(',')]
@@ -186,11 +180,9 @@ with st.sidebar:
                     grid_list.append(list(map(int, nums)))
                 except ValueError:
                      raise ValueError(f"Row {i+1} ('{r}') contains non-numeric values.")
-
             grid_np = np.array(grid_list)
             if np.any((grid_np < 0) | (grid_np > 9)):
                  raise ValueError("Numbers must be between 0 and 9.")
-
             st.session_state.initial_grid = grid_np
             st.session_state.steps = list(solve_sudoku_steps(grid_np, use_fc, use_mrv, use_lcv))
             st.session_state.step_index = 1
@@ -228,12 +220,10 @@ if total_steps > 0:
         if play_pause_placeholder.button("⏸️ Pause", disabled=(current_index >= total_steps)):
             st.session_state.running = False
             st.rerun()
-
     if col_next.button("Next ➡️", disabled=(current_index >= total_steps)):
         st.session_state.running = False
         st.session_state.step_index += 1
         st.rerun()
-
     slider_idx = st.slider("Step Navigation", min_value=1, max_value=total_steps, value=current_index, key="step_slider_nav")
     if slider_idx != current_index:
         st.session_state.step_index = slider_idx
@@ -268,10 +258,8 @@ with info_col:
     """
     st.markdown(legend_html, unsafe_allow_html=True)
     st.markdown("---")
-
     st.subheader("🔍 Solver Action")
     st.info(reasoning_note)
-
     st.subheader("📊 Solver Stats")
     stat_col1, stat_col2 = st.columns(2)
     stat_col1.metric("Assignments", assignment_count_display)
@@ -297,7 +285,6 @@ with grid_col:
     for i in range(0, 10, 3):
         ax.axhline(i - 0.5, color='black', linewidth=2)
         ax.axvline(i - 0.5, color='black', linewidth=2)
-
     ax.tick_params(axis='both', which='both', bottom=False, top=False, left=False, right=False,
                    labelbottom=False, labelleft=False)
 
@@ -308,7 +295,6 @@ with grid_col:
             cell_text = str(cell_value) if cell_value else ''
             text_color = 'blue' if is_original_number and cell_value else 'black'
             font_weight = 'bold' if is_original_number and cell_value else 'normal'
-
             background_color = 'white'
             cell_coord = (r, c)
             if cell_coord == current_cell_display:
@@ -317,16 +303,13 @@ with grid_col:
                 elif current_action == "Backtrack": background_color = '#ffcccb'
             elif current_action == "Prune" and cell_coord in affected_cells_display:
                  background_color = '#add8e6'
-
             if background_color != 'white':
                 ax.add_patch(plt.Rectangle((c - 0.5, r - 0.5), 1, 1, facecolor=background_color, alpha=0.6))
-
             ax.text(c, r, cell_text, ha='center', va='center', fontsize=16, color=text_color, weight=font_weight)
 
     ax.set_xlim(-0.5, 8.5)
     ax.set_ylim(8.5, -0.5)
     st.pyplot(fig, clear_figure=True)
-
 if st.session_state.running and current_index < total_steps:
     time.sleep(st.session_state.delay)
     st.session_state.step_index += 1
