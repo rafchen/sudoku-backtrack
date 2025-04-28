@@ -220,10 +220,12 @@ if total_steps > 0:
         if play_pause_placeholder.button("⏸️ Pause", disabled=(current_index >= total_steps)):
             st.session_state.running = False
             st.rerun()
+
     if col_next.button("Next ➡️", disabled=(current_index >= total_steps)):
         st.session_state.running = False
         st.session_state.step_index += 1
         st.rerun()
+        
     slider_idx = st.slider("Step Navigation", min_value=1, max_value=total_steps, value=current_index, key="step_slider_nav")
     if slider_idx != current_index:
         st.session_state.step_index = slider_idx
