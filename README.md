@@ -2,6 +2,8 @@
 
 This playground provides an interactive visualization of the backtracking algorithm used to solve Sudoku puzzles. It allows users to observe the step-by-step process and understand the impact of different constraint satisfaction heuristics.
 
+Try it yourself on : https://rafchen-sudoku-backtrack-app-kmv0ra.streamlit.app/
+
 ## Features
 
 *   **Interactive Sudoku Grid:** Visualize the puzzle being solved in real-time.
